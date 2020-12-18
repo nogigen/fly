@@ -1,0 +1,101 @@
+/* fly.l */
+oneOrMoreSpace      ([ ]|\t)+
+zeroOrMoreSpace     ([ ]|\t)*
+sign                [+-]
+signOrNon	    [+-]?
+alphabetic          [a-zA-Z]
+bool                (true|false)
+digit               [0-9]
+alphanumeric        ({alphabetic}|{digit})
+integer             [0-9]+
+double              ([0-9]*\.[0-9]+)
+string              \"[^\"]*\"
+location            (\{{zeroOrMoreSpace}{signOrNon}{double}{zeroOrMoreSpace},{zeroOrMoreSpace}{signOrNon}{double}{zeroOrMoreSpace},{zeroOrMoreSpace}{signOrNon}{double}{zeroOrMoreSpace}\})
+type                (int|float|str|bool|loc|LIST{oneOrMoreSpace}int|LIST{oneOrMoreSpace}float|LIST{oneOrMoreSpace}str|LIST{oneOrMoreSpace}bool|LIST{oneOrMoreSpace}loc)    
+getters             get(Angle|Location|Speed|Acceleration|Temperature|Now|Connection)
+opCamera            (turn(On|Off)Camera|takePics)
+locateFunc          (goto)
+utilities           (takeOn|takeOff|land|turn|setAcceleration|lockOnTarget|connect|send)
+builtInFunctions    ({getters}|{opCamera}|{locateFunc}|{utilities})   
+zero_param	    {getters}|takeOn|takeOff|land|turnOnCamera|turnOffCamera
+one_param	    goto|random|turn|setAcceleration|lockOnTarget|connect|send
+two_param	    takePics
+functionType	    ({type}|void)
+variableNumerics    ({digit}|{alphabetic}|_)
+variableName        {alphabetic}{variableNumerics}*
+listInteger	    (\[{zeroOrMoreSpace}({signOrNon}{integer}{zeroOrMoreSpace},{zeroOrMoreSpace})*({signOrNon}{integer}{zeroOrMoreSpace})?\])
+listFloat	    (\[{zeroOrMoreSpace}({signOrNon}{double}{zeroOrMoreSpace},{zeroOrMoreSpace})*({signOrNon}{double}{zeroOrMoreSpace})?\])	
+listBool	    (\[{zeroOrMoreSpace}({bool}{zeroOrMoreSpace},{zeroOrMoreSpace})*({bool}{zeroOrMoreSpace})?\])
+listString	    (\[{zeroOrMoreSpace}({string}{zeroOrMoreSpace},{zeroOrMoreSpace})*({string}{zeroOrMoreSpace})?\])
+listLocation	    (\[{zeroOrMoreSpace}({location}{zeroOrMoreSpace},{zeroOrMoreSpace})*({location}{zeroOrMoreSpace})?\])
+list		    ({listInteger}|{listFloat}|{listBool}|{listString}|{listLocation})
+commentSign         (\/\/)
+comment             {commentSign}(.)*
+
+%%
+\n		          																							{extern int lineno; lineno++;}
+\t			  																							{;}
+{oneOrMoreSpace}         					 																		{;}
+start{zeroOrMoreSpace}\:			 																				{return(START);}
+{zero_param}																									{return(PRIM_ZERO_PARAM);}
+{one_param}																									{return(PRIM_ONE_PARAM);}
+{two_param}																									{return(PRIM_TWO_PARAM);}																																						
+\.                                       																					{return(DOT);}
+\,                                      																					{return(COMMA);}
+\;                                       																					{return(SEMICOLON);}
+{integer}					 																				{return(INTEGER);}
+{double}					 																				{return(FLOAT);}
+{string}					 																				{return(STRING);}
+{bool}					 																					{return(BOOL);}
+{location}				 																					{return(LOCATION);}
+{listInteger}																									{return(LIST_INTEGER);}
+{listFloat}																									{return(LIST_FLOAT);}
+{listBool}																									{return(LIST_BOOL);}
+{listString}																									{return(LIST_STRING);}
+{listLocation}																									{return(LIST_LOCATION);}
+int{oneOrMoreSpace}{variableName}																						{return(INT_DECLARATION_or1parameter);}
+float{oneOrMoreSpace}{variableName}																						{return(FLOAT_DECLARATION_or1parameter);}
+str{oneOrMoreSpace}{variableName}																						{return(STR_DECLARATION_or1parameter);}
+bool{oneOrMoreSpace}{variableName}																						{return(BOOL_DECLARATION_or1parameter);}
+loc{oneOrMoreSpace}{variableName}																						{return(LOCATION_DECLARATION_or1parameter);}
+LIST{oneOrMoreSpace}int{oneOrMoreSpace}{variableName}																				{return(LIST_INT_DECLARATION_or1parameter);}
+LIST{oneOrMoreSpace}float{oneOrMoreSpace}{variableName}																				{return(LIST_FLOAT_DECLARATION_or1parameter);}
+LIST{oneOrMoreSpace}str{oneOrMoreSpace}{variableName}																				{return(LIST_STR_DECLARATION_or1parameter);}
+LIST{oneOrMoreSpace}bool{oneOrMoreSpace}{variableName}																				{return(LIST_BOOL_DECLARATION_or1parameter);}
+LIST{oneOrMoreSpace}loc{oneOrMoreSpace}{variableName}																				{return(LIST_LOCATION_DECLARATION_or1parameter);}
+continue																									{return(CONTINUE);}
+break																										{return(BREAK);}
+input                                 																				{return(INPUT);}
+print                                 																						{return(OUTPUT);}
+return                                   																					{return(RETURN);}
+if                                       																					{return(IF);}
+else                                     																					{return(ELSE);}
+while                                    																					{return(WHILE);}
+for                                      																					{return(FOR);}
+{functionType}{oneOrMoreSpace}func{oneOrMoreSpace}@{variableNumerics}*{zeroOrMoreSpace}   	  														{return(DEFINE_FUNC);}
+@{variableName}{zeroOrMoreSpace}                      																				{return(CALL_FUNC);}
+{variableName}                               																					{return(VARIABLE);}
+{comment}                                																					{;}
+\(                                       																					{return(LP);}
+\)                                       																					{return(RP);}
+\[                                       																					{return(LCB);}
+\]                                       																					{return(RCB);}
+\{                                       																					{return(LB);}
+\}                                       																					{return(RB);}
+\+                                       																					{return(PLUS);}
+\-                                       																					{return(MINUS);}
+\*                                       																					{return(TIMES);}
+\/                                       																					{return(DIVIDE);}
+\!=                                      																					{return(NOT_EQ);}
+\<=                                      																					{return(LESS_EQ);}
+\>=                                      																					{return(GREATER_EQ);}
+\>                                      																					{return(GREATER);}
+\<                                       																					{return(LESS);}
+\=                                       																					{return(ASSIGN_OP);}
+\:                                      																					{return(COLON);}
+\=\=                                    																					{return(EQUAL_OP);}
+\&\&                                     																					{return(AND_LOGIC);}
+\|\|                                    																				 	{return(OR_LOGIC);}
+
+%%
+int yywrap() { return 1; }

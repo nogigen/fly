@@ -1,0 +1,115 @@
+// This is an example of the drone simulation
+// which is simulated by the lex file.
+// it starts with start:  semicolon can be seperated by space(s).
+// our bnf grammar is not the most sophisticated grammar. So, understanding the language from the yacc could be a better choice?
+// what im trying to say is that, if bnf and yacc conflicts, thats because we couldnt write correct bnf grammar to our yacc.
+// our yacc 100% works in the way we want it to work.
+
+start:
+
+bool func @checkTemperature(float threshold) {
+    if(getTemperature() < threshold) {
+        return true;
+    }
+    return false;
+}
+
+void func @sendSOS(float threshold1, float threshold2) {
+    if(@checkTemperature(threshold)) {
+       print("Help me! ");
+       print("My location is " + getLocation());
+       print("My temperature is " + getTemperature());
+    }
+}
+
+void func @meetRandomPeople(loc home) {
+    loc randomLoc = random(location);
+    takeOff();
+    goto(randomLoc);
+    print("Hello!!");
+    turn(360);
+    print("Hello!!");
+    goto(home);
+}
+
+void func @seeDocs(str ipAddress) {
+    connect(ipAddress);
+    print(getConnection());
+    print(getNow());
+    send(ipAddress);
+}
+// loc myHome = {16.6, 1, -3.4} is a syntax error since "1" is not a float type.
+loc myHome = {16.6, 1.2, -3.4};
+
+loc museum = input("Where is the museum?");
+
+LIST loc people = [{12.1, 13.2, 4.0}, {1.2, 2.3, 3.4}, {4.5, 5.2, -6.0}];
+LIST int numbers = [-1,2, 12, 24];
+LIST str author_names = ["Nogay Evirgen"];
+int temperatureThreshold = 67;
+
+// float distThreshold = 1 will give syntax error.
+float distThreshold = 0.1;
+
+str homeIpAddress = "192.168.0.1";
+
+takeOn();
+goto(museum);
+turnOnCamera();
+
+// if you try to use takePics(3) , it will be a syntax error.
+takePics(3, museum);
+
+turnOffCamera();
+bool temp = true && @batteryCheck();
+
+// using i++ instead of i = i + 1 is a syntax error.
+for(int i=0; i< arraySize; i = i + 1) {
+    bool condition = true;
+    while(@checkTemperature(temperatureThreshold) || condition) {
+        while(getLocation() > distThreshold && getAngle()) {
+             setAcceleration(10);
+             lockOnTarget(nogaysHome);
+
+	     if(getLocation() == {0.0, 0.0, 0.0}) {
+		continue;
+	     }
+        }
+        if(getLocation() - nogaysHome <= distThreshold) {
+             setAcceleration(-10);
+             turnOnCamera();
+             takePics(3, nogaysHome);
+             print(getNow());
+             turnOffCamera();
+	     conditon = false;
+        }
+       
+     }
+     if(condition){
+        @sendSOS(temperatureThreshold, 20);
+     }
+     else {
+	break;
+     }
+}
+
+takeOff();
+goto(myHome);
+land();
+@seeDocs(homeIpAddress);
+
+// these lines are added to show some features.
+// below this part, as a code, doesn't make any sense.
+int temp = 5;
+int temp1 = temp + varInt;
+
+float temp2 = temp + 5.5;
+float temp3 = 5.5 + 5;
+
+bool temp4 = varBool;
+temp5 = temp4 || false;
+
+loc temp6 = {2.2, 1.1, 2.3};
+
+str temp7 = "cool string" + varStr;
+temp8 = "cool string" + "normal string";
